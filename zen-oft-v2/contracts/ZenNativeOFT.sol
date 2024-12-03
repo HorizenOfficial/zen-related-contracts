@@ -10,6 +10,8 @@ import { MessagingParams, MessagingFee, MessagingReceipt } from "@layerzerolabs/
 
 contract ZenNativeOFT is OFT, ReentrancyGuard {
 
+    uint256 immutable public CONVERSION_RATE;
+
     error FailedUnwrap();
     error NotEnoughMsgValue();
 
@@ -18,7 +20,27 @@ contract ZenNativeOFT is OFT, ReentrancyGuard {
         string memory _symbol,
         address _lzEndpoint,
         address _delegate
-    ) OFT(_name, _symbol, _lzEndpoint, _delegate) Ownable(_delegate) {}
+    ) OFT(_name, _symbol, _lzEndpoint, _delegate) Ownable(_delegate) {
+        CONVERSION_RATE = 10**(18-decimals());
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 18;
+    }
+
+    /**
+     * @dev Retrieves the shared decimals of the OFT.
+     * @return The shared decimals of the OFT.
+     *
+     * @dev Sets an implicit cap on the amount of tokens, over uint64.max() will need some sort of outbound cap / totalSupply cap
+     * Lowest common decimal denominator between chains.
+     * Defaults to 6 decimal places to provide up to 18,446,744,073,709.551615 units (max uint64).
+     * For tokens exceeding this totalSupply(), they will need to override the sharedDecimals function with something smaller.
+     * ie. 4 sharedDecimals would be 1,844,674,407,370,955.1615
+     */
+    function sharedDecimals() public view virtual override returns (uint8) {
+        return 18;
+    }
 
     /**
      * @dev Executes the send operation.
@@ -141,8 +163,9 @@ contract ZenNativeOFT is OFT, ReentrancyGuard {
         uint256 _amountLD,
         uint32 /*_srcEid*/
     ) internal virtual override nonReentrant returns (uint256 amountReceivedLD) {        
-        (bool success, ) = _to.call{value: _amountLD}("");
+        (bool success, ) = _to.call{value: _amountLD * CONVERSION_RATE}("");
         if(!success) revert FailedUnwrap();
+
         return _amountLD;
     }
 }

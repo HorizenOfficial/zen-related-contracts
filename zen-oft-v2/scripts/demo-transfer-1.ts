@@ -33,7 +33,7 @@ async function main() {
     process.env.OTHER_CHAIN_LZ_ID,
     hre.ethers.utils.hexZeroPad(ocSigner.address, 32),
     Number(process.env.AMOUNT),
-    Number(process.env.AMOUNT) * 0.9, //up to 10% slippage
+    Number(process.env.AMOUNT),
     OPTIONS,
     [],
     []

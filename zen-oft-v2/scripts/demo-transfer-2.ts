@@ -32,8 +32,8 @@ async function main() {
   const ocSendParam = [
     process.env.CHAIN_LZ_ID,
     hre.ethers.utils.hexZeroPad(signer.address, 32),
-    Number(process.env.AMOUNT) * 0.9,
-    Number(process.env.AMOUNT) * 0.81, //up to 10% slippage
+    Number(process.env.AMOUNT),
+    Number(process.env.AMOUNT),
     OPTIONS,
     [],
     []
