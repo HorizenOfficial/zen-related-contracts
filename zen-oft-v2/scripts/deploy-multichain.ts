@@ -5,23 +5,18 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 async function main() {
-  
-  const abi = [
-    "function setPeer(uint32 _eid, bytes32 _peer) external"
-  ]
 
   const signer = (await hre.ethers.getSigners())[0];
 
   //deploy on gobi
   console.log("Deploying Chain Token (ZenNativeOFT)")
   const ZenNativeOFT = await hre.ethers.getContractFactory("ZenNativeOFT");
-  const token = await ZenNativeOFT.attach("0xd3d405A59D9D0Ba0f264dE89720790aDC5103399") /*await ZenNativeOFT.deploy(
+  const token = await ZenNativeOFT.deploy(
     process.env.CHAIN_TOKEN_NAME,
     process.env.CHAIN_TOKEN_SYMBOL,
     process.env.CHAIN_LZ_ENDPOINT,
     signer.address
-  )*/
-  
+  )
   await token.deployed();
 
   console.log(`Chain token address: ${token.address}`)
@@ -32,13 +27,13 @@ async function main() {
 
   console.log("Deploying Other Chain Token (OtherSideOFT)")
   const OFT = await hre.ethers.getContractFactory("OtherSideOFT");
-  const ocToken = await OFT.attach("0xB4c7BbB64bb69F87F672532544f343d9390D156d") /*await OFT.connect(ocSigner).deploy(
+  const ocToken = await OFT.connect(ocSigner).deploy(
     process.env.OTHER_CHAIN_TOKEN_NAME!,
     process.env.OTHER_CHAIN_TOKEN_SYMBOL!,
     process.env.OTHER_CHAIN_LZ_ENDPOINT!,
     ocSigner.getAddress()
   )
-  await ocToken.deployed();*/
+  await ocToken.deployed();
 
   console.log(`Other Chain token address: ${ocToken.address}`)
 

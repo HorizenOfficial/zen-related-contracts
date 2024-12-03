@@ -106,6 +106,27 @@ contract ZenNativeOFT is OFT, ReentrancyGuard {
         return _nativeFee;
     }
 
+    /**
+     * @dev Internal function to mock the amount mutation from a OFT debit() operation.
+     * @param _amountLD The amount to send in local decimals.
+     * @param _minAmountLD The minimum amount to send in local decimals.
+     * @dev _dstEid The destination endpoint ID.
+     * @return amountSentLD The amount sent, in local decimals.
+     * @return amountReceivedLD The amount to be received on the remote chain, in local decimals.
+     *
+     * @dev This is where things like fees would be calculated and deducted from the amount to be received on the remote.
+     */
+    function _debitView(
+        uint256 _amountLD,
+        uint256 _minAmountLD,
+        uint32 /*_dstEid*/
+    ) internal view virtual override returns (uint256 amountSentLD, uint256 amountReceivedLD) {
+        if (_amountLD < _minAmountLD) {
+            revert SlippageExceeded(_amountLD, _minAmountLD);
+        }
+        return (_amountLD, _amountLD);
+    }
+
 
     // ----------------------------- RECEIVER PART
      /**

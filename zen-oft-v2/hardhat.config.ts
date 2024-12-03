@@ -44,6 +44,10 @@ const config: HardhatUserConfig = {
     amoy: {
       url: "https://rpc-amoy.polygon.technology",
       accounts: account
+    },
+    curtis: {
+      url: "https://rpc.curtis.apechain.com",
+      accounts: account
     }
   }
 };
